@@ -1,0 +1,106 @@
+body {
+  background: linear-gradient(135deg, #f5f5f5, #dfe9f3);
+  font-family: 'Segoe UI';
+}
+
+.pokedex-card {
+  border-radius: 20px !important;
+  overflow: hidden;
+  transition: 0.3s;
+}
+
+.pokedex-card:hover {
+  transform: scale(1.02);
+}
+
+.card {
+  border: none !important;
+}
+
+.card-header {
+  border-bottom: none;
+  border-top-left-radius: 20px !important;
+  border-top-right-radius: 20px !important;
+}
+
+#listaPokemon img,
+#listaPokemonFull img {
+  width: 90px;
+}
+
+.dark-mode {
+  background: #121212;
+  color: white;
+}
+
+.dark-mode .card {
+  background: #1e1e1e;
+}
+
+.dark-mode input,
+.dark-mode select {
+  background: #2a2a2a;
+  color: white;
+  border: 1px solid #555;
+}
+
+.dark-mode input::placeholder {
+  color: #aaa;
+}
+
+.dark-mode .list-group-item {
+  background: #2a2a2a;
+  color: white;
+  border-color: #444;
+}
+
+.dark-mode #listaPokemon p,
+.dark-mode #listaPokemonFull p {
+  color: #ffffff !important;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+}
+
+body.dark-mode .modal-content {
+  background-color: #2a2a2a;
+  color: #e4e4e7;
+  border: 1px solid #444;
+}
+
+body.dark-mode .modal-header,
+body.dark-mode .modal-footer {
+  border-color: #444;
+}
+
+body.dark-mode .modal-title {
+  color: #ffffff;
+}
+
+body.dark-mode .btn-close {
+  filter: invert(1);
+}
+
+body.dark-mode .modal-footer .btn-secondary {
+  background-color: #444;
+  border: none;
+}
+
+body.dark-mode .modal-body {
+  color: #d1d5db;
+}
+
+body.dark-mode .modal input,
+body.dark-mode .modal select {
+  background-color: #2a2a3a;
+  color: #fff;
+  border: 1px solid #3a3a4a;
+}
+
+body.dark-mode .modal .list-group-item {
+  background-color: #2a2a3a;
+  color: #e4e4e7;
+  border-color: #3a3a4a;
+}
+
+body.dark-mode .modal .list-group-item:hover {
+  background-color: #34344a;
+}
