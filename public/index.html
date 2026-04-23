@@ -12,197 +12,325 @@
     <link rel="stylesheet" href="assets/css/styles.css" />
   </head>
 
-  <body>
-    <nav class="navbar navbar-dark bg-dark">
-      <div class="container">
-        <span class="navbar-brand d-flex align-items-center">
-          <img src="assets/img/logo.png" width="50" />
-          <span class="ms-2">Pokemon App</span>
-        </span>
+  <body class="dark-mode">
+    <div class="container-fluid px-0">
+      <!-- HERO HEADER PRINCIPAL -->
+      <div class="pokemon-hero-section" id="heroSection">
+        <div class="hero-background">
+          <div class="hero-ball hero-ball-1"></div>
+          <div class="hero-ball hero-ball-2"></div>
+          <div class="hero-ball hero-ball-3"></div>
+        </div>
+        
+        <div class="container-fluid px-4 py-5">
+          <div class="row align-items-center min-vh-50">
+            <div class="col-12 text-center hero-content">
+              <div class="hero-emoji mb-3">✨</div>
+              <h1 class="pokemon-hero-title">¡Bienvenido a tu Pokémon App!</h1>
+              <p class="pokemon-hero-subtitle">Captura y gestiona tus pokémons favoritos</p>
+              <div class="hero-divider"></div>
+              <p class="hero-tagline">Inicia tu aventura como entrenador Pokémon 🎮</p>
 
-        <button class="btn btn-warning" onclick="toggleDarkMode()">🌙</button>
+              <!-- BOTONES DE NAVEGACIÓN -->
+              <div class="nav-buttons mt-5">
+                <button class="btn btn-nav btn-usuarios" onclick="mostrarSeccion('usuarios')">
+                  <span class="btn-nav-icon">👤</span>
+                  <span>Gestión de Usuarios</span>
+                </button>
+                <button class="btn btn-nav btn-pokemones" onclick="mostrarSeccion('pokemones')">
+                  <span class="btn-nav-icon">📚</span>
+                  <span>Lista Pokémons</span>
+                </button>
+                <button class="btn btn-nav btn-captura" onclick="mostrarSeccion('captura')">
+                  <span class="btn-nav-icon">⚡</span>
+                  <span>Capturar Pokémon</span>
+                </button>
+              </div>
+
+              <!-- TIPS Y INFORMACIÓN -->
+              <div class="tips-section mt-5 pt-4">
+                <div class="tips-container">
+                  <div class="tip-card">
+                    <div class="tip-icon">👤</div>
+                    <h5>Gestión de Usuarios</h5>
+                    <p>Registra nuevos entrenadores, actualiza información y elimina tu cuenta de forma sencilla</p>
+                  </div>
+                  <div class="tip-card">
+                    <div class="tip-icon">📚</div>
+                    <h5>Explora Pokémons</h5>
+                    <p>Descubre todos los 150 pokémons disponibles con búsqueda rápida y detalles completos</p>
+                  </div>
+                  <div class="tip-card">
+                    <div class="tip-icon">⚡</div>
+                    <h5>Captura y Colecciona</h5>
+                    <p>Atrapa pokémons y crea tu colección exclusiva de campeones entrenados</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-    </nav>
 
-    <div class="container mt-4">
-      <div class="row g-4">
-        <!-- PANEL USUARIOS (NUEVO) -->
-        <div
-          class="modal fade"
-          id="usuariosModal"
-          tabindex="-1"
-          aria-labelledby="usuariosModalLabel"
-          aria-hidden="true"
-        >
-          <div class="modal-dialog">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h1 class="modal-title fs-5" id="usuariosModalLabel">
-                  Usuarios
-                </h1>
-                <button
-                  type="button"
-                  class="btn-close"
-                  data-bs-dismiss="modal"
-                  aria-label="Close"
-                ></button>
-              </div>
-              <div class="modal-body">
-                <ul id="listaDeUsuarios" class="list-group"></ul>
+      <!-- SECCIÓN USUARIOS -->
+      <div class="seccion-contenedor d-none" id="seccion-usuarios">
+        <div class="section-hero-header usuarios-header-section">
+          <div class="hero-background">
+            <div class="hero-ball hero-ball-1"></div>
+            <div class="hero-ball hero-ball-2"></div>
+            <div class="hero-ball hero-ball-3"></div>
+          </div>
+          <div class="container-fluid px-4 py-5">
+            <div class="row">
+              <div class="col-12 d-flex justify-content-between align-items-center">
+                <div>
+                  <button class="btn btn-volver btn-volver-light" onclick="volverAlMenu()">← Volver</button>
+                  <h2 class="section-title section-title-light">👤 Gestión de Usuarios</h2>
+                  <p class="section-subtitle">Inicia sesión o registra un nuevo usuario para comenzar</p>
+                </div>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- USUARIOS -->
-        <div class="col-md-4" id="colUsuarios">
-          <div class="card pokedex-card border-danger">
-            <div class="card-header bg-danger text-white">
-              <h5>Usuarios</h5>
-            </div>
+        <div class="container-fluid px-4 py-4">
+          <div class="row g-4">
+            <!-- SECCIÓN COMPLETA CRUD -->
+            <div class="col-12">
+              <div class="card pokemon-card usuarios-card">
+                <div class="card-header-pokemon usuarios-header">
+                  <span class="icon-header">✏️</span>
+                  <h5>Gestión Completa de Usuarios</h5>
+                </div>
+                <div class="card-body">
+                  <!-- TABS PARA CADA OPERACIÓN -->
+                  <ul class="nav nav-tabs mb-4" role="tablist" style="border-bottom: 2px solid #e2e8f0;">
+                    <li class="nav-item" role="presentation">
+                      <button class="nav-link active" id="registro-tab" data-bs-toggle="tab" data-bs-target="#registro-content" type="button" role="tab">
+                        💾 Registrar
+                      </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                      <button class="nav-link" id="actualizar-tab" data-bs-toggle="tab" data-bs-target="#actualizar-content" type="button" role="tab">
+                        🔄 Actualizar
+                      </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                      <button class="nav-link" id="eliminar-tab" data-bs-toggle="tab" data-bs-target="#eliminar-content" type="button" role="tab">
+                        🗑️ Eliminar
+                      </button>
+                    </li>
+                  </ul>
 
-            <div class="card-body">
-              <input
-                id="cedula"
-                class="form-control mb-2"
-                placeholder="Cédula"
-              />
-              <input
-                id="nombre"
-                class="form-control mb-2"
-                placeholder="Nombre"
-              />
-              <input id="email" class="form-control mb-2" placeholder="Email" />
-              <input id="edad" class="form-control mb-2" placeholder="Edad" />
+                  <div class="tab-content">
+                    <!-- TAB: REGISTRAR -->
+                    <div class="tab-pane fade show active" id="registro-content" role="tabpanel">
+                      <h6 class="mb-3 fw-bold text-primary">Registra un Nuevo Usuario</h6>
+                      <div class="form-section">
+                        <input
+                          id="cedula"
+                          class="form-control custom-input mb-3"
+                          placeholder="🆔 Cédula"
+                        />
+                        <input
+                          id="nombre"
+                          class="form-control custom-input mb-3"
+                          placeholder="📝 Nombre"
+                        />
+                        <input id="email" class="form-control custom-input mb-3" placeholder="📧 Email" />
+                        <input id="edad" class="form-control custom-input mb-3" placeholder="🎂 Edad" />
+                      </div>
+                      <button class="btn btn-modern btn-guardar w-100" onclick="crearUsuario()">
+                        💾 Registrar Usuario
+                      </button>
+                    </div>
 
-              <div class="d-grid gap-2">
-                <button class="btn btn-danger" onclick="crearUsuario()">
-                  Guardar
-                </button>
-                <button class="btn btn-warning" onclick="actualizarUsuario()">
-                  Actualizar
-                </button>
-                <button
-                  type="button"
-                  class="btn btn-secondary"
-                  data-bs-toggle="modal"
-                  data-bs-target="#usuariosModal"
-                  onclick="cargarUsuariosPanel()"
-                >
-                  Listar
-                </button>
-                <button class="btn btn-dark" onclick="eliminarUsuario()">
-                  Eliminar
-                </button>
+                    <!-- TAB: ACTUALIZAR -->
+                    <div class="tab-pane fade" id="actualizar-content" role="tabpanel">
+                      <h6 class="mb-3 fw-bold text-primary">Actualiza un Usuario Existente</h6>
+                      <div class="form-section">
+                        <input
+                          id="cedulaActualizar"
+                          class="form-control custom-input mb-3"
+                          placeholder="🆔 Cédula del usuario a actualizar"
+                        />
+                        <input
+                          id="nombreActualizar"
+                          class="form-control custom-input mb-3"
+                          placeholder="📝 Nuevo nombre"
+                        />
+                        <input id="emailActualizar" class="form-control custom-input mb-3" placeholder="📧 Nuevo email" />
+                        <input id="edadActualizar" class="form-control custom-input mb-3" placeholder="🎂 Nueva edad" />
+                      </div>
+                      <button class="btn btn-modern btn-actualizar w-100" onclick="actualizarUsuario()">
+                        🔄 Actualizar Usuario
+                      </button>
+                    </div>
+
+                    <!-- TAB: ELIMINAR -->
+                    <div class="tab-pane fade" id="eliminar-content" role="tabpanel">
+                      <h6 class="mb-3 fw-bold text-danger">Elimina un Usuario</h6>
+                      <div class="form-section">
+                        <input
+                          id="cedulaEliminar"
+                          class="form-control custom-input mb-3"
+                          placeholder="🆔 Cédula del usuario a eliminar"
+                        />
+                      </div>
+                      <button class="btn btn-modern btn-eliminar w-100" onclick="eliminarUsuario()">
+                        🗑️ Eliminar Usuario
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- BOTÓN VER USUARIOS -->
+                  <hr class="my-4" />
+                  <button class="btn btn-modern btn-listar w-100" onclick="cargarUsuariosPanel()">
+                    📋 Ver Todos los Usuarios
+                  </button>
+                </div>
               </div>
+            </div>
+          </div>
 
-              <hr />
+          <!-- PANEL USUARIOS MODAL -->
+          <div
+            class="modal fade"
+            id="usuariosModal"
+            tabindex="-1"
+            aria-labelledby="usuariosModalLabel"
+            aria-hidden="true"
+          >
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+              <div class="modal-content modal-pokemon">
+                <div class="modal-header border-0 pb-0">
+                  <h1 class="modal-title fs-5" id="usuariosModalLabel">
+                    👥 Usuarios Registrados
+                  </h1>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  <ul id="listaDeUsuarios" class="list-group list-group-flush"></ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECCIÓN POKÉMON -->
+      <div class="seccion-contenedor d-none" id="seccion-pokemones">
+        <div class="section-hero-header pokemon-color-header-section">
+          <div class="hero-background">
+            <div class="hero-ball hero-ball-1"></div>
+            <div class="hero-ball hero-ball-2"></div>
+            <div class="hero-ball hero-ball-3"></div>
+          </div>
+          <div class="container-fluid px-4 py-5">
+            <div class="row">
+              <div class="col-12 d-flex justify-content-between align-items-center">
+                <div>
+                  <button class="btn btn-volver btn-volver-light" onclick="volverAlMenu()">← Volver</button>
+                  <h2 class="section-title section-title-light">📚 Lista Pokémons</h2>
+                  <p class="section-subtitle">Descubre y busca todos los pokémons disponibles en nuestra base de datos</p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
-        <!-- POKEMON -->
-        <div class="col-md-4" id="colPokemon">
-          <div class="card pokedex-card border-warning">
-            <div class="card-header bg-warning">
-              <h5>Pokémon</h5>
-            </div>
-
+        <div class="container-fluid px-4 py-4">
+          <div class="card pokemon-card pokemon-explore-card">
             <div class="card-body">
               <input
                 id="buscador"
-                class="form-control mb-3"
-                placeholder="Buscar Pokémon"
+                class="form-control custom-input mb-4"
+                placeholder="🔎 Buscar pokémon..."
               />
-              <div id="listaPokemon" class="row"></div>
+              <div id="listaPokemon" class="row g-3 pokemon-grid-all"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECCIÓN CAPTURA -->
+      <div class="seccion-contenedor d-none" id="seccion-captura">
+        <div class="section-hero-header captura-color-header-section">
+          <div class="hero-background">
+            <div class="hero-ball hero-ball-1"></div>
+            <div class="hero-ball hero-ball-2"></div>
+            <div class="hero-ball hero-ball-3"></div>
+          </div>
+          <div class="container-fluid px-4 py-5">
+            <div class="row">
+              <div class="col-12 d-flex justify-content-between align-items-center">
+                <div>
+                  <button class="btn btn-volver btn-volver-light" onclick="volverAlMenu()">← Volver</button>
+                  <h2 class="section-title section-title-light">⚡ Capturar Pokémon</h2>
+                  <p class="section-subtitle subtitle-white">Selecciona un pokémon y atrápalo para tu colección</p>
+                  <div id="usuarioActualCaptura" class="alert alert-info mt-3 d-none mb-0 alert-captura">
+                    <span>Usuario activo: <strong id="usuarioActualCapturaInfo"></strong></span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
-        <!-- CAPTURA -->
-        <div class="col-md-4" id="colCaptura">
-          <div class="card pokedex-card border-primary">
-            <div class="card-header bg-primary text-white">
-              <h5>Captura</h5>
-            </div>
-
+        <div class="container-fluid px-4 py-4">
+          <div class="card pokemon-card captura-card">
             <div class="card-body">
-              <input
-                id="usuarioSelect"
-                class="form-control mb-2"
-                placeholder="Cédula del usuario"
-              />
-              <select id="pokemonSelect" class="form-control mb-2"></select>
-
-              <button class="btn btn-primary w-100" onclick="capturarPokemon()">
-                Capturar
-              </button>
-
-              <button
-                type="button"
-                class="btn btn-secondary w-100 mt-2"
-                onclick="cargarCapturasPanel()"
-              >
-                Listar
-              </button>
-
-              <hr />
-              <ul id="listaCapturas" class="list-group"></ul>
-            </div>
-          </div>
-        </div>
-
-        <!-- PANEL CAPTURAS DERECHA -->
-        <div
-          class="modal fade"
-          id="capturasModal"
-          tabindex="-1"
-          aria-labelledby="capturasModalLabel"
-          aria-hidden="true"
-        >
-          <div class="modal-dialog">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h1 class="modal-title fs-5" id="capturasModalLabel">
-                  Pokemones Capturados
-                </h1>
-                <button
-                  type="button"
-                  class="btn-close"
-                  data-bs-dismiss="modal"
-                  aria-label="Close"
-                ></button>
+              <div class="form-section">
+                <input
+                  id="usuarioSelect"
+                  class="form-control custom-input mb-3"
+                  placeholder="🆔 Cédula del usuario"
+                />
+                <select id="pokemonSelect" class="form-control custom-input mb-4">
+                  <option selected disabled>⬇️ Selecciona un pokémon</option>
+                </select>
               </div>
-              <div class="modal-body">
-                <ul id="listaCapturasPanel" class="list-group"></ul>
+
+              <button class="btn btn-modern btn-capturar w-100 mb-2" onclick="capturarPokemon()">
+                ✨ Capturar Pokémon
+              </button>
+
+              <button type="button" class="btn btn-modern btn-historial w-100" onclick="cargarCapturasPanel()">
+                📊 Mi Colección
+              </button>
+
+              <div class="mt-4">
+                <ul id="listaCapturas" class="list-group list-group-flush"></ul>
               </div>
             </div>
           </div>
-        </div>
-      </div>
 
-      <div class="text-center mt-3">
-        <button
-          id="btnToggle"
-          class="btn btn-warning px-4"
-          onclick="verMasPokemon()"
-        >
-          Ver más
-        </button>
-      </div>
-
-      <div id="panelExtra" class="card pokedex-card border-warning mt-4 d-none">
-        <div class="card-header bg-warning">
-          <h5>Lista pokemones completa</h5>
-        </div>
-        <div class="card-body">
-          <div id="listaPokemonFull" class="row"></div>
+          <!-- PANEL CAPTURAS MODAL -->
+          <div
+            class="modal fade"
+            id="capturasModal"
+            tabindex="-1"
+            aria-labelledby="capturasModalLabel"
+            aria-hidden="true"
+          >
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+              <div class="modal-content modal-pokemon">
+                <div class="modal-header border-0 pb-0">
+                  <h1 class="modal-title fs-5" id="capturasModalLabel">
+                    🏆 Mi Colección de Pokémons
+                  </h1>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  <ul id="listaCapturasPanel" class="list-group list-group-flush"></ul>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-
-    <div class="toast-container position-fixed bottom-0 end-0 p-3">
-      <div id="toast" class="toast text-bg-dark border-0">
+      <div id="toast" class="toast pokemon-toast border-0">
         <div class="d-flex">
           <div class="toast-body" id="toastMsg"></div>
           <button
@@ -215,16 +343,18 @@
 
     <div class="modal fade" id="pokemonModal">
       <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-          <div class="modal-header">
+        <div class="modal-content modal-pokemon">
+          <div class="modal-header border-0 pb-0">
             <h5 id="pokemonNombre"></h5>
             <button class="btn-close" data-bs-dismiss="modal"></button>
           </div>
 
           <div class="modal-body text-center">
-            <img id="pokemonImg" width="150" />
-            <p id="pokemonTipo"></p>
-            <p id="pokemonPoder"></p>
+            <div class="pokemon-modal-img">
+              <img id="pokemonImg" width="180" />
+            </div>
+            <p id="pokemonTipo" class="pokemon-tipo"></p>
+            <p id="pokemonPoder" class="pokemon-poder"></p>
           </div>
         </div>
       </div>

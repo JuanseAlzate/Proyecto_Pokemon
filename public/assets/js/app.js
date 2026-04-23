@@ -1,37 +1,58 @@
 const API = 'http://localhost:3000/api';
 
 let todosPokemon = [];
-let mostrandoTodos = false;
 
 document.addEventListener('DOMContentLoaded', () => {
-  if (localStorage.getItem('darkMode') === 'true') {
-    document.body.classList.add('dark-mode');
-  }
-
   cargarPokemon();
 
-  buscador.addEventListener('input', filtrarPokemon);
+  const buscador = document.getElementById('buscador');
+  if (buscador) {
+    buscador.addEventListener('input', filtrarPokemon);
+  }
 });
-
-function toggleDarkMode() {
-  document.body.classList.toggle('dark-mode');
-  localStorage.setItem(
-    'darkMode',
-    document.body.classList.contains('dark-mode'),
-  );
-}
 
 function mostrarToast(msg) {
   const toast = new bootstrap.Toast(document.getElementById('toast'));
-  toastMsg.textContent = msg;
+  document.getElementById('toastMsg').textContent = msg;
   toast.show();
 }
 
-/* ---------------- USUARIOS ---------------- */
+/* -------- NAVEGACIÓN DE SECCIONES -------- */
+
+function mostrarSeccion(seccion) {
+  document
+    .querySelectorAll('.seccion-contenedor')
+    .forEach((s) => s.classList.add('d-none'));
+  document.getElementById('heroSection').classList.add('d-none');
+
+  const seccionId = `seccion-${seccion}`;
+  const elemento = document.getElementById(seccionId);
+  if (elemento) {
+    elemento.classList.remove('d-none');
+  }
+
+  window.scrollTo(0, 0);
+}
+
+function volverAlMenu() {
+  document
+    .querySelectorAll('.seccion-contenedor')
+    .forEach((s) => s.classList.add('d-none'));
+
+  document.getElementById('heroSection').classList.remove('d-none');
+  window.scrollTo(0, 0);
+}
+
+/* ------------ USUARIOS --------------- */
 
 async function crearUsuario() {
-  if (!cedula.value || !nombre.value) {
-    mostrarToast('Completa los campos');
+  const cedula = document.getElementById('cedula').value;
+  const nombre = document.getElementById('nombre').value;
+  const email = document.getElementById('email').value;
+  const edad = document.getElementById('edad').value;
+
+  if (!cedula || !nombre) {
+    mostrarToast('Completa los campos obligatorios');
     return;
   }
 
@@ -40,10 +61,10 @@ async function crearUsuario() {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        cedula: cedula.value,
-        nombre: nombre.value,
-        email: email.value,
-        edad: edad.value,
+        cedula,
+        nombre,
+        email,
+        edad,
       }),
     });
 
@@ -54,47 +75,76 @@ async function crearUsuario() {
       return;
     }
 
-    console.log('Entre aca');
-    mostrarToast('Usuario creado');
-    cargarUsuariosPanel();
+    mostrarToast('¡Usuario registrado exitosamente!');
+    document.getElementById('cedula').value = '';
+    document.getElementById('nombre').value = '';
+    document.getElementById('email').value = '';
+    document.getElementById('edad').value = '';
   } catch {
-    mostrarToast('Error servidor');
+    mostrarToast('Error al registrar usuario');
   }
 }
 
 async function actualizarUsuario() {
-  if (!cedula.value) return mostrarToast('Ingresa cédula');
+  const cedula = document.getElementById('cedulaActualizar').value;
+  const nombre = document.getElementById('nombreActualizar').value;
+  const email = document.getElementById('emailActualizar').value;
+  const edad = document.getElementById('edadActualizar').value;
+
+  if (!cedula) {
+    mostrarToast('Ingresa la cédula del usuario a actualizar');
+    return;
+  }
 
   try {
-    const res = await fetch(`${API}/usuarios/actualizar/${cedula.value}`, {
+    const res = await fetch(`${API}/usuarios/actualizar/${cedula}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        nombre: nombre.value,
-        email: email.value,
-        edad: edad.value,
+        nombre: nombre || undefined,
+        email: email || undefined,
+        edad: edad || undefined,
       }),
     });
 
     const data = await res.json();
-    mostrarToast(data.mensaje);
+
+    if (!res.ok) {
+      mostrarToast(data.mensaje);
+      return;
+    }
+
+    mostrarToast('¡Usuario actualizado exitosamente!');
+    document.getElementById('cedulaActualizar').value = '';
+    document.getElementById('nombreActualizar').value = '';
+    document.getElementById('emailActualizar').value = '';
+    document.getElementById('edadActualizar').value = '';
   } catch {
-    mostrarToast('Error al actualizar');
+    mostrarToast('Error al actualizar usuario');
   }
 }
 
 async function eliminarUsuario() {
-  if (!cedula.value) return mostrarToast('Ingresa cédula');
+  const cedula = document.getElementById('cedulaEliminar').value;
+
+  if (!cedula) {
+    mostrarToast('Ingresa la cédula a eliminar');
+    return;
+  }
 
   try {
-    const res = await fetch(`${API}/usuarios/borrar/${cedula.value}`, {
+    const res = await fetch(`${API}/usuarios/borrar/${cedula}`, {
       method: 'DELETE',
     });
-
     const data = await res.json();
+
     mostrarToast(data.mensaje);
+
+    if (res.ok) {
+      document.getElementById('cedulaEliminar').value = '';
+    }
   } catch {
-    mostrarToast('Error al eliminar');
+    mostrarToast('Error al eliminar usuario');
   }
 }
 
@@ -103,103 +153,104 @@ async function cargarUsuariosPanel() {
     const res = await fetch(`${API}/usuarios/listar`);
     const data = await res.json();
 
+    if (!res.ok) {
+      mostrarToast(data.mensaje || 'Error cargando usuarios');
+      return;
+    }
+
+    const listaDeUsuarios = document.getElementById('listaDeUsuarios');
+    const usuarios = Array.isArray(data.resultado) ? data.resultado : [];
+
     listaDeUsuarios.innerHTML = '';
 
-    data.resultado.forEach((u) => {
-      listaDeUsuarios.innerHTML += `
-        <li class="list-group-item">
-          <strong>Nombre: ${u.nombre}</strong><br>
-          <small>Correo: ${u.email}</small><br>
-          <small>Edad: ${u.edad} años</small>
-        </li>
-      `;
-    });
+    if (usuarios.length === 0) {
+      listaDeUsuarios.innerHTML =
+        '<li class="list-group-item text-center text-muted">No hay usuarios registrados</li>';
+    } else {
+      usuarios.forEach((u) => {
+        listaDeUsuarios.innerHTML += `
+          <li class="list-group-item">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <strong>Nombre: ${u.nombre}</strong><br>
+                <small>Cédula: ${u.cedula}</small><br>
+                <small>Email: ${u.email || 'Sin correo'}</small><br>
+                <small>Edad: ${u.edad} años</small>
+              </div>
+            </div>
+          </li>
+        `;
+      });
+    }
+
+    new bootstrap.Modal(document.getElementById('usuariosModal')).show();
   } catch {
-    mostrarToast('Error cargando panel');
+    mostrarToast('Error cargando usuarios');
   }
 }
 
-/* ---------------- POKEMON ---------------- */
+/* --------- POKEMON ---------- */
 
 async function cargarPokemon() {
-  const res = await fetch('https://pokeapi.co/api/v2/pokemon?limit=150');
-  const data = await res.json();
+  try {
+    const res = await fetch('https://pokeapi.co/api/v2/pokemon?limit=200');
+    const data = await res.json();
 
-  const detalles = await Promise.all(
-    data.results.map((p) => fetch(p.url).then((res) => res.json())),
-  );
+    const detalles = await Promise.all(
+      data.results.map((p) =>
+        fetch(p.url).then((pokemonRes) => pokemonRes.json()),
+      ),
+    );
 
-  todosPokemon = detalles;
-
-  renderPokemon(todosPokemon.slice(0, 4));
+    todosPokemon = detalles;
+    renderPokemon(todosPokemon);
+    actualizarSelectPokemon();
+  } catch (e) {
+    console.error('Error cargando Pokémon:', e);
+  }
 }
 
 function renderPokemon(lista) {
+  const listaPokemon = document.getElementById('listaPokemon');
+  if (!listaPokemon) return;
+
   listaPokemon.innerHTML = '';
 
   lista.forEach((poke) => {
+    const tipo = poke.types[0]?.type?.name?.toUpperCase() || 'NORMAL';
     listaPokemon.innerHTML += `
-      <div class="col-6 text-center" onclick="verPokemon(${poke.id})">
-        <img src="${poke.sprites.front_default}">
-        <p>${poke.name}</p>
+      <div class="col-sm-6 col-md-4 col-lg-3">
+        <div class="pokemon-card pokemon-item" onclick="verPokemon(${poke.id})" style="cursor: pointer;">
+          <div class="text-center pokemon-img-container">
+            <img src="${poke.sprites.front_default}" alt="${poke.name}">
+          </div>
+          <div class="pokemon-info p-2 text-center">
+            <p class="fw-bold mb-1">${poke.name.toUpperCase()}</p>
+            <small class="text-muted">Tipo: ${tipo}</small><br>
+            <small class="text-muted">Poder: ${poke.base_experience}</small>
+          </div>
+        </div>
       </div>
     `;
   });
+}
 
-  pokemonSelect.innerHTML = todosPokemon
-    .map((p) => `<option>${p.name}</option>`)
+function actualizarSelectPokemon() {
+  const pokemonSelect = document.getElementById('pokemonSelect');
+  if (!pokemonSelect) return;
+
+  pokemonSelect.innerHTML =
+    '<option selected disabled>⬇️ Selecciona un pokémon</option>';
+  pokemonSelect.innerHTML += todosPokemon
+    .map((p) => `<option value="${p.name}">${p.name.toUpperCase()}</option>`)
     .join('');
-}
-
-function renderPokemonFull() {
-  listaPokemonFull.innerHTML = '';
-
-  todosPokemon.forEach((poke) => {
-    listaPokemonFull.innerHTML += `
-      <div class="col-md-2 text-center" onclick="verPokemon(${poke.id})">
-        <img src="${poke.sprites.front_default}">
-        <p>${poke.name}</p>
-      </div>
-    `;
-  });
-}
-
-function verMasPokemon() {
-  mostrandoTodos = !mostrandoTodos;
-
-  if (mostrandoTodos) {
-    colPokemon.classList.add('d-none');
-
-    colUsuarios.classList.remove('col-md-4');
-    colCaptura.classList.remove('col-md-4');
-
-    colUsuarios.classList.add('col-md-6');
-    colCaptura.classList.add('col-md-6');
-
-    panelExtra.classList.remove('d-none');
-    renderPokemonFull();
-
-    btnToggle.textContent = 'Ver menos';
-  } else {
-    colPokemon.classList.remove('d-none');
-
-    colUsuarios.classList.remove('col-md-6');
-    colCaptura.classList.remove('col-md-6');
-
-    colUsuarios.classList.add('col-md-4');
-    colCaptura.classList.add('col-md-4');
-
-    panelExtra.classList.add('d-none');
-
-    btnToggle.textContent = 'Ver más';
-  }
 }
 
 function filtrarPokemon(e) {
   const texto = e.target.value.toLowerCase();
 
   if (texto === '') {
-    renderPokemon(todosPokemon.slice(0, 4));
+    renderPokemon(todosPokemon);
     return;
   }
 
@@ -208,10 +259,14 @@ function filtrarPokemon(e) {
   );
 }
 
-/* ---------------- CAPTURAS ---------------- */
+/* ----------- CAPTURAS ----------- */
 
 async function capturarPokemon() {
-  if (!usuarioSelect.value) return mostrarToast('Ingresa cédula');
+  const usuarioSelect = document.getElementById('usuarioSelect');
+  const pokemonSelect = document.getElementById('pokemonSelect');
+
+  if (!usuarioSelect.value) return mostrarToast('Ingresa cédula del usuario');
+  if (!pokemonSelect.value) return mostrarToast('Selecciona un pokémon');
 
   const nombre = pokemonSelect.value;
   const poke = todosPokemon.find((p) => p.name === nombre);
@@ -238,53 +293,73 @@ async function capturarPokemon() {
       return;
     }
 
-    mostrarToast('Capturado');
-    cargarCapturas();
+    mostrarToast('¡Pokémon capturado exitosamente!');
+    pokemonSelect.value = '⬇️ Selecciona un pokémon';
   } catch {
     mostrarToast('Error al capturar');
   }
 }
 
 async function cargarCapturasPanel() {
-  if (!usuarioSelect.value) return mostrarToast('Ingresa cédula');
+  const usuarioSelect = document.getElementById('usuarioSelect');
+
+  if (!usuarioSelect.value) return mostrarToast('Ingresa cédula del usuario');
 
   try {
     const res = await fetch(`${API}/captura/listar/${usuarioSelect.value}`);
     const data = await res.json();
 
+    const listaCapturasPanel = document.getElementById('listaCapturasPanel');
     listaCapturasPanel.innerHTML = '';
 
-    data.resultado.forEach((c) => {
-      const poke = todosPokemon.find((p) => p.id === c.pokemonId);
+    if (data.resultado && data.resultado.length > 0) {
+      data.resultado.forEach((c) => {
+        const poke = todosPokemon.find((p) => p.id === c.pokemonId);
 
-      listaCapturasPanel.innerHTML += `
-        <li class="list-group-item d-flex gap-2 align-items-center">
-          <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${c.pokemonId}.png" width="40">
-          <div>
-            <strong>Nombre: ${poke ? poke.name : 'Desconocido'}</strong><br>
-            <small>ID: ${c.pokemonId}</small>
-          </div>
-        </li>
-      `;
-    });
+        listaCapturasPanel.innerHTML += `
+          <li class="list-group-item d-flex gap-2 align-items-center">
+            <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${c.pokemonId}.png" width="50" style="background: rgba(0,0,0,0.05); padding: 5px; border-radius: 5px;">
+            <div>
+              <strong>${poke ? poke.name.toUpperCase() : 'Desconocido'}</strong><br>
+              <small>Tipo: ${poke ? (poke.types[0]?.type?.name || 'Normal').toUpperCase() : 'Desconocido'}</small>
+              <small class="text-muted">Poder: ${poke ? poke.base_experience : 'Desconocido'}</small>
+            </div>
+          </li>
+        `;
+      });
+    } else {
+      listaCapturasPanel.innerHTML =
+        '<li class="list-group-item text-center text-muted">Este usuario aún no ha capturado pokémons</li>';
+    }
 
     const modal = new bootstrap.Modal(document.getElementById('capturasModal'));
     modal.show();
   } catch {
-    mostrarToast('Error cargando panel de capturas');
+    mostrarToast('Error cargando colección');
   }
 }
 
-/* ---------------- MODAL ---------------- */
+/* -------- MODAL POKÉMON -------- */
 
 function verPokemon(id) {
   const poke = todosPokemon.find((p) => p.id === id);
 
-  pokemonNombre.textContent = poke.name;
-  pokemonImg.src = poke.sprites.front_default;
-  pokemonTipo.textContent =
-    'Tipo: ' + poke.types.map((t) => t.type.name).join(', ');
-  pokemonPoder.textContent = 'Poder: ' + poke.base_experience;
+  if (!poke) {
+    mostrarToast('Pokémon no encontrado');
+    return;
+  }
 
-  new bootstrap.Modal(pokemonModal).show();
+  document.getElementById('pokemonNombre').textContent =
+    poke.name.toUpperCase();
+  document.getElementById('pokemonImg').src = poke.sprites.front_default;
+  document.getElementById('pokemonTipo').textContent =
+    'Tipo: ' +
+    poke.types
+      .map((t) => t.type.name)
+      .join(', ')
+      .toUpperCase();
+  document.getElementById('pokemonPoder').textContent =
+    'Experiencia base: ' + poke.base_experience;
+
+  new bootstrap.Modal(document.getElementById('pokemonModal')).show();
 }
